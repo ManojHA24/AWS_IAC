@@ -1,0 +1,11 @@
+# Ignore OpenTofu (Terraform) state and cache
+*.tfstate
+*.tfstate.backup
+*.terraform.lock*
+.terraform/
+
+# Ignore editor-related files
+*.swp
+*.log
+
+.env

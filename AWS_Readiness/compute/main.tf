@@ -29,7 +29,7 @@ module "ec2" {
 
   instance_type = "t2.micro"
   ami = "ami-0c55b159cbfafe1f0"
-  security_group_ids = module.security_group.sg_id
+  security_group_ids = [ module.security_group.sg_id ]
   subnet_id = module.subnet.subnet_id
 	nic_id = aws_network_interface.my_network_interface.id
 }

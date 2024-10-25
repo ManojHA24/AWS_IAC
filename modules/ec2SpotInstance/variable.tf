@@ -10,9 +10,12 @@ variable "security_group_ids" {
 variable "subnet_id" {
   type = string
 }
-variable "nic_id" {
+variable "spot_price" {
   type = string
 }
-variable "deploy" {
+variable "spot_type" {
   type = bool
+}
+variable "deploy" {
+  type = string
 }

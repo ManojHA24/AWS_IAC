@@ -37,6 +37,12 @@ resource "aws_network_interface" "my_network_interface" {
   private_ips = ["10.0.1.10"]  # Specify a private IP if needed
 }
 
+module "key_Pair" {
+	source = "../../modules/keyPair"
+
+	key_pair_name = var.key_pair_name
+}
+
 module "ec2" {
   source = "../../modules/ec2"
 	deploy = var.spot_instance == false ? 1 : 0
@@ -46,6 +52,7 @@ module "ec2" {
   security_group_ids = [ module.security_group.sg_id ]
   subnet_id = module.subnet.subnet_id
 	nic_id = aws_network_interface.my_network_interface.id
+	key_pair_name = module.key_Pair.aws_key_pair_name
 }
 
 module "ec2_spot" {
@@ -58,5 +65,27 @@ module "ec2_spot" {
 	spot_type = "persistent"
 	security_group_ids = module.security_group.sg_id
 	subnet_id = module.subnet.subnet_id
+	key_pair_name = module.key_Pair.aws_key_pair_name
+}
 
+module "efs" {
+	source = "../../modules/efs"
+}
+
+resource "null_resource" "configure_nfs" {
+  depends_on = [aws_efs_mount_target.mount]
+  connection {
+    type     = "ssh"
+    user     = "ubuntu"
+    private_key = module.key_Pair.aws_key_pem
+    host     = var.spot_instance == true ? module.ec2_spot.spot_ec2_pip : module.ec2.ec2_public_ip
+  }
+  provisioner "remote-exec" {
+    inline = [
+
+      "sudo apt-get update -y",
+      "sudo mkdir -p /mnt/nixstore",
+      "sudo mount -t efs -o accesspoint=${module.efs.access_point_id} ${module.efs.efs_id}:/ ${var.access_point_mount_point}"
+    ]
+  }
 }

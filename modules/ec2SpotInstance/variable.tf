@@ -19,3 +19,6 @@ variable "spot_type" {
 variable "deploy" {
   type = string
 }
+variable "key_pair_name" {
+  type = string
+}

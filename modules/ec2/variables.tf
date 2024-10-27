@@ -16,3 +16,6 @@ variable "nic_id" {
 variable "deploy" {
   type = bool
 }
+variable "key_pair_name" {
+  type = string
+}

@@ -6,7 +6,7 @@ resource "aws_spot_instance_request" "vps" {
   spot_type              = var.spot_type
   # block_duration_minutes = 120
   wait_for_fulfillment   = "true"
-#   key_name               = aws_key_pair.ssh_key.key_name
+  key_name               = var.key_pair_name
 
   security_groups = var.security_group_ids
   subnet_id = var.subnet_id

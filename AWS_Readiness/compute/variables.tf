@@ -7,3 +7,9 @@ variable "security_groups" {
 variable "spot_instance" {
   type = bool
 }
+variable "key_pair_name" {
+  type = string
+}
+variable "access_point_mount_point" {
+  type = string
+}

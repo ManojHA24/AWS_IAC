@@ -1,4 +1,4 @@
-location = "us-east-1"
-key_pair_name = "ec2_key_pair"
+location                 = "us-east-1"
+key_pair_name            = "ec2_key_pair"
 access_point_mount_point = "/mnt/nixstore"
-spot_instance = false
+spot_instance            = false

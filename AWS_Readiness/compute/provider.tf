@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.location
+  region     = var.location
   access_key = ""
   secret_key = ""
   # assume_role {

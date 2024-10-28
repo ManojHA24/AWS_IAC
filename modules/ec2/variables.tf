@@ -10,8 +10,8 @@ variable "security_group_ids" {
 variable "subnet_id" {
   type = string
 }
-variable "nic_id" {
-  type = string
+variable "associate_pip" {
+  type = bool
 }
 variable "deploy" {
   type = bool

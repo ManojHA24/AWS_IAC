@@ -33,10 +33,10 @@ module "route_table" {
 	internet_gateway_id = module.internet_gateway.internet_gateway_id
 }
 
-resource "aws_network_interface" "my_network_interface" {
-  subnet_id   = module.subnet.subnet_id
-  private_ips = ["10.0.1.10"]  # Specify a private IP if needed
-}
+# resource "aws_network_interface" "my_network_interface" {
+#   subnet_id   = module.subnet.subnet_id
+#   private_ips = ["10.0.1.10"]  # Specify a private IP if needed
+# }
 
 module "key_Pair" {
 	source = "../../modules/keyPair"
@@ -49,11 +49,12 @@ module "ec2" {
 	deploy = var.spot_instance == false ? false : true
 
   instance_type = "t2.micro"
-  ami = "ami-0c55b159cbfafe1f0"
+  ami = "ami-0866a3c8686eaeeba"
   security_group_ids = [ module.security_group.sg_id ]
   subnet_id = module.subnet.subnet_id
-	nic_id = aws_network_interface.my_network_interface.id
-	key_pair_name = module.key_Pair.aws_key_pair_name
+#   nic_id = aws_network_interface.my_network_interface.id
+  key_pair_name = module.key_Pair.aws_key_pair_name
+  associate_pip = true
 }
 
 module "ec2_spot" {
@@ -70,7 +71,10 @@ module "ec2_spot" {
 }
 
 module "efs" {
-	source = "../../modules/efs"
+  source = "../../modules/efs"
+
+  security_group_id = module.security_group.sg_id
+  subnet_id = module.subnet.subnet_id
 }
 
 resource "null_resource" "configure_nfs" {
@@ -85,7 +89,7 @@ resource "null_resource" "configure_nfs" {
 
       "sudo apt-get update -y",
       "sudo mkdir -p /mnt/nixstore",
-      "sudo mount -t efs -o accesspoint=${module.efs.access_point_id} ${module.efs.efs_id}:/ ${var.access_point_mount_point}"
+      "sudo mount -t efs -o tls,accesspoint=${module.efs.access_point_id} ${module.efs.efs_id}:/ ${var.access_point_mount_point}"
     ]
   }
 }

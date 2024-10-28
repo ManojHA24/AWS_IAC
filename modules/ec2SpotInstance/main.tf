@@ -8,6 +8,6 @@ resource "aws_spot_instance_request" "vps" {
   wait_for_fulfillment   = "true"
   key_name               = var.key_pair_name
 
-  security_groups = var.security_group_ids
+  security_groups = [ var.security_group_ids ]
   subnet_id = var.subnet_id
 }

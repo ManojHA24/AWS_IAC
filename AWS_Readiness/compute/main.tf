@@ -28,6 +28,7 @@ module "internet_gateway" {
 module "route_table" {
 	source = "../../modules/vpc/routeTable"
 
+	vpc_id = module.vpc.vpc_id
 	subnet_id = module.subnet.subnet_id
 	internet_gateway_id = module.internet_gateway.internet_gateway_id
 }
@@ -45,7 +46,7 @@ module "key_Pair" {
 
 module "ec2" {
   source = "../../modules/ec2"
-	deploy = var.spot_instance == false ? 1 : 0
+	deploy = var.spot_instance == false ? false : true
 
   instance_type = "t2.micro"
   ami = "ami-0c55b159cbfafe1f0"
@@ -57,7 +58,7 @@ module "ec2" {
 
 module "ec2_spot" {
 	source = "../../modules/ec2SpotInstance"
-	deploy = var.spot_instance == true ? 1 : 0
+	deploy = var.spot_instance == true ? true : false
 
 	instance_type = "t2.micro"
 	ami = "ami-0c55b159cbfafe1f0"
@@ -73,7 +74,6 @@ module "efs" {
 }
 
 resource "null_resource" "configure_nfs" {
-  depends_on = [aws_efs_mount_target.mount]
   connection {
     type     = "ssh"
     user     = "ubuntu"

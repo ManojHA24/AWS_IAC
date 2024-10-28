@@ -1,3 +1,3 @@
 output "spot_ec2_pip" {
-  value = aws_spot_instance_request.vps.public_ip
+  value = var.deploy == true ? aws_spot_instance_request.vps[0].public_ip : ""
 }

@@ -70,26 +70,42 @@ module "ec2_spot" {
   key_pair_name      = module.key_Pair.aws_key_pair_name
 }
 
-module "efs" {
-  source = "../../modules/efs"
+module "ebs" {
+  source = "../../modules/ebs"
 
-  security_group_id = module.security_group.sg_id
-  subnet_id         = module.subnet.subnet_id
+  ebs_size = var.ebs_size
+  ec2_availability_zone = module.ec2_spot.spot_ec2_availability_zone
+  multi_attach_enabled = var.multi_attach_enabled
 }
 
-resource "null_resource" "configure_nfs" {
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = module.key_Pair.aws_key_pem
-    host        = var.spot_instance == true ? module.ec2_spot.spot_ec2_pip : module.ec2.ec2_public_ip
-  }
-  provisioner "remote-exec" {
-    inline = [
+module "ebs_vol_attach" {
+  source = "../../modules/ebs/ebs_volume_attach"
 
-      "sudo apt-get update -y",
-      "sudo mkdir -p /mnt/nixstore",
-      "sudo mount -t efs -o tls,accesspoint=${module.efs.access_point_id} ${module.efs.efs_id}:/ ${var.access_point_mount_point}"
-    ]
-  }
+  ec2_id = module.ec2_spot.spot_ec2_id
+  volume_id = module.ebs.id
+  depends_on = [ module.ebs ]
+
 }
+# module "efs" {
+#   source = "../../modules/efs"
+
+#   security_group_id = module.security_group.sg_id
+#   subnet_id         = module.subnet.subnet_id
+# }
+
+# resource "null_resource" "configure_nfs" {
+#   connection {
+#     type        = "ssh"
+#     user        = "ubuntu"
+#     private_key = module.key_Pair.aws_key_pem
+#     host        = var.spot_instance == true ? module.ec2_spot.spot_ec2_pip : module.ec2.ec2_public_ip
+#   }
+#   provisioner "remote-exec" {
+#     inline = [
+
+#       "sudo apt-get update -y",
+#       "sudo mkdir -p /mnt/nixstore",
+#       "sudo mount -t efs -o tls,accesspoint=${module.efs.access_point_id} ${module.efs.efs_id}:/ ${var.access_point_mount_point}"
+#     ]
+#   }
+# }

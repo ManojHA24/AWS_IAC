@@ -13,3 +13,10 @@ variable "key_pair_name" {
 variable "access_point_mount_point" {
   type = string
 }
+
+variable "ebs_size" {
+  type = number
+}
+variable "multi_attach_enabled" {
+  type = bool
+}

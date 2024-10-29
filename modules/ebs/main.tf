@@ -1,0 +1,5 @@
+resource "aws_ebs_volume" "ebs" {
+  availability_zone = var.ec2_availability_zone
+  size              = var.ebs_size
+  multi_attach_enabled = var.multi_attach_enabled
+}

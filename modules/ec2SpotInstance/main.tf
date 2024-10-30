@@ -10,4 +10,6 @@ resource "aws_spot_instance_request" "vps" {
 
   security_groups = [ var.security_group_ids ]
   subnet_id = var.subnet_id
+  associate_public_ip_address = true
+  instance_interruption_behavior = "terminate" 
 }

@@ -10,6 +10,7 @@ module "subnet" {
   vpc_id                 = module.vpc.vpc_id
   snet_availability_zone = "us-east-1a"
   snet_cidr              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
 }
 
 module "security_group" {
@@ -35,8 +36,7 @@ module "route_table" {
 
 # resource "aws_network_interface" "my_network_interface" {
 #   subnet_id   = module.subnet.subnet_id
-#   private_ips = ["10.0.1.10"]  # Specify a private IP if needed
-# }
+#   private_ips = ["10.0.1.10"]
 
 module "key_Pair" {
   source = "../../modules/keyPair"
@@ -44,48 +44,63 @@ module "key_Pair" {
   key_pair_name = var.key_pair_name
 }
 
-module "ec2" {
-  source = "../../modules/ec2"
-  deploy = var.spot_instance == false ? false : true
+# module "ec2" {
+#   source = "../../modules/ec2"
+#   deploy = var.spot_instance == false ? false : true
 
-  instance_type      = "t2.micro"
-  ami                = "ami-0866a3c8686eaeeba"
-  security_group_ids = [module.security_group.sg_id]
-  subnet_id          = module.subnet.subnet_id
-  #   nic_id = aws_network_interface.my_network_interface.id
-  key_pair_name = module.key_Pair.aws_key_pair_name
-  associate_pip = true
-}
+#   instance_type      = "t3.micro"
+#   ami                = "ami-0866a3c8686eaeeba"
+#   security_group_ids = [module.security_group.sg_id]
+#   subnet_id          = module.subnet.subnet_id
+#   #   nic_id = aws_network_interface.my_network_interface.id
+#   key_pair_name = module.key_Pair.aws_key_pair_name
+#   associate_pip = true
+# }
 
-module "ec2_spot" {
-  source = "../../modules/ec2SpotInstance"
-  deploy = var.spot_instance == true ? true : false
+# module "ec2_spot" {
+#   source = "../../modules/ec2SpotInstance"
+#   deploy = var.spot_instance == true ? true : false
 
-  instance_type      = "t2.micro"
-  ami                = "ami-0c55b159cbfafe1f0"
-  spot_price         = "0.03"
-  spot_type          = "persistent"
-  security_group_ids = module.security_group.sg_id
-  subnet_id          = module.subnet.subnet_id
-  key_pair_name      = module.key_Pair.aws_key_pair_name
-}
+#   instance_type      = "t3.micro" # use only m5, c5, r5, t3, and z1d faily vms
+#   ami                = "ami-0866a3c8686eaeeba"
+#   spot_price         = "0.03"
+#   spot_type          = "persistent"
+#   security_group_ids = module.security_group.sg_id
+#   subnet_id          = module.subnet.subnet_id
+#   key_pair_name      = module.key_Pair.aws_key_pair_name
+# }
 
 module "ebs" {
   source = "../../modules/ebs"
 
-  ebs_size = var.ebs_size
-  ec2_availability_zone = module.ec2_spot.spot_ec2_availability_zone
-  multi_attach_enabled = var.multi_attach_enabled
+  ebs_size              = var.ebs_size
+  ec2_availability_zone = "us-east-1a" #module.ec2_spot.spot_ec2_availability_zone
+  multi_attach_enabled  = var.multi_attach_enabled
+  ebs_type              = "io1"
+  ebs_iops              = 1000
 }
 
-module "ebs_vol_attach" {
-  source = "../../modules/ebs/ebs_volume_attach"
+module "ec2_spot_fleet" {
+  source = "../../modules/ec2SpotFleet"
 
-  ec2_id = module.ec2_spot.spot_ec2_id
-  volume_id = module.ebs.id
-  depends_on = [ module.ebs ]
-
+  ami_id                = "ami-010e773a908e799c1" 
+  instance_types        = ["c5.large", "m5.large", "t3.large"]
+  key_Pair              = module.key_Pair.aws_key_pair_name
+  subnet_id             = module.subnet.subnet_id
+  ebs_availability_zone = module.ebs.ebs_availability_zone
+  associate_pip         = true
+  security_group_ids    = [ module.security_group.sg_id ]
 }
+
+# module "ebs_vol_attach" {
+#   source = "../../modules/ebs/ebs_volume_attach"
+
+#   ec2_id = var.spot_instance == true ? aws_spot_fleet_request.example.id : ""
+#   volume_id = module.ebs.ebs_id
+#   depends_on = [ aws_spot_fleet_request.example ]
+
+# }
+
 # module "efs" {
 #   source = "../../modules/efs"
 
@@ -109,3 +124,8 @@ module "ebs_vol_attach" {
 #     ]
 #   }
 # }
+
+# c7a.xlarge
+# m5.large
+# t3.large
+# c5.xlarge

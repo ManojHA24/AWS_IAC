@@ -9,3 +9,7 @@ variable "snet_availability_zone" {
 variable "vpc_id" {
   type = string
 }
+
+variable "map_public_ip_on_launch" {
+ type = bool 
+}

@@ -41,15 +41,15 @@ module "key_Pair" {
 #   key_pair_name      = module.key_Pair.aws_key_pair_name
 # }
 
-module "ebs" {
-  source = "../../modules/ebs"
+# module "ebs" {
+#   source = "../../modules/ebs"
 
-  ebs_size              = var.ebs_size
-  ec2_availability_zone = "us-east-1a" #module.ec2_spot.spot_ec2_availability_zone
-  multi_attach_enabled  = var.multi_attach_enabled
-  ebs_type              = "io1"
-  ebs_iops              = 1000
-}
+#   ebs_size              = var.ebs_size
+#   ec2_availability_zone = "us-east-1a" #module.ec2_spot.spot_ec2_availability_zone
+#   multi_attach_enabled  = var.multi_attach_enabled
+#   ebs_type              = "io1"
+#   ebs_iops              = 1000
+# }
 
 module "ec2_spot_fleet" {
   source = "../../modules/ec2SpotFleet"

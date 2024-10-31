@@ -41,3 +41,7 @@ variable "db_compute_instance" {
 variable "db_subnet_group_name" {
   
 }
+
+variable "engine_version" {
+  type = string
+}

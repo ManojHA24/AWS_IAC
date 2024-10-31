@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket         = "valnix-terraform-state-bucket"
-    key            = "AWS_Readiness/compute/compute01.tfstate"
+    key            = "AWS_Readiness/network/network01.tfstate"
     region         = "us-east-1"
     dynamodb_table = "tf-backend"
     encrypt        = true
@@ -22,7 +22,7 @@ terraform {
 }
 
 provider "aws" {
-  region     = var.location
+  region     = "us-east-1"
   access_key = ""
   secret_key = ""
   # assume_role {

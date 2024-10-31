@@ -32,6 +32,10 @@ resource "aws_spot_fleet_request" "example" {
 
 				su ubuntu -c ./$SCRIPT_NAME
 			EOF
+
+			tags = {
+				Name = "valnix-spot-fleet-instance"
+			}
 		}
 	}
 

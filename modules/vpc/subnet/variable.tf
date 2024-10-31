@@ -13,3 +13,7 @@ variable "vpc_id" {
 variable "map_public_ip_on_launch" {
  type = bool 
 }
+
+variable "subnet_name" {
+  type = string 
+}

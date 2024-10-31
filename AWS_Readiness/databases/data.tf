@@ -5,9 +5,9 @@ data "aws_vpc" "vpc" {
   }
 }
 
-data "aws_subnet" "compute_subnet" {
+data "aws_subnet" "db_subnet" {
   filter {
     name   = "tag:Name"
-    values = ["snet-compute-01"]
+    values = ["snet-db-01"]
   }
 }

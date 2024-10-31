@@ -9,3 +9,7 @@ variable "subnet_id" {
 variable "vpc_id" {
   type = string
 }
+
+variable "route_table" {
+  type = string
+}

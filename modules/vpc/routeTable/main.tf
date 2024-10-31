@@ -5,6 +5,10 @@ resource "aws_route_table" "route-table-vps-env" {
     cidr_block = "0.0.0.0/0"
     gateway_id = var.internet_gateway_id
   }
+
+  tags = {
+    Name = var.route_table
+  }
 }
 
 resource "aws_route_table_association" "subnet-association" {

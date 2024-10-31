@@ -1,19 +1,19 @@
 resource "aws_db_subnet_group" "default" {
-  name       = "my-db-subnet-group"
-  subnet_ids = var.subnet_ids # List of subnet IDs for the RDS instance
+  name       = var.db_subnet_group_name
+  subnet_ids = var.subnet_ids 
 }
 
 resource "aws_db_instance" "default" {
   identifier              = "mydbinstance"
-  allocated_storage       = 20  # Size in GB
-  engine                 = "mysql" # Change to your desired database engine (mysql, postgres, etc.)
-  engine_version         = "8.0"   # Specify the version of the database engine
-  instance_class         = "db.t3.micro" # Change as needed
+  allocated_storage       = var.allocated_storage
+  engine                 = var.rds_engine
+  engine_version         = "8.0"
+  instance_class         = var.db_compute_instance
   db_subnet_group_name   = aws_db_subnet_group.default.name
-  vpc_security_group_ids = [aws_security_group.default.id] # Change to your security group ID
+  vpc_security_group_ids = var.security_group_ids
   username               = var.db_username
   password               = var.db_password
   db_name                = var.db_name
-  skip_final_snapshot    = true  # Set to false if you want a final snapshot when deleting the DB
-  multi_az               = false  # Change to true for Multi-AZ deployments
+  skip_final_snapshot    = var.skip_create_final_snapshot
+  multi_az               = var.multi_availability_zones
 }
